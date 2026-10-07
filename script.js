@@ -1,24 +1,13 @@
 // script.js
-// ZeoX brain — talks to Groq, keeps her in character, handles the UI.
+// ZeoX frontend — talks to OUR backend (/api/chat), not Groq directly.
+// The Groq key now lives safely on the server.
 
 import { ZOE_SYSTEM_PROMPT, OPENING_LINE } from './persona.js';
-
-/* ─────────────────────────────────────────
-   CONFIG
-   ───────────────────────────────────────── */
-
-// ⚠️ PASTE YOUR GROQ KEY BELOW, between the quotes.
-// Get one at https://console.groq.com/keys
-const GROQ_API_KEY = "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";
-
-const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const MODEL = "llama-3.3-70b-versatile";
 
 /* ─────────────────────────────────────────
    STATE
    ───────────────────────────────────────── */
 
-// Conversation history (session only — resets on refresh)
 const messages = [
   { role: "system", content: ZOE_SYSTEM_PROMPT }
 ];
@@ -29,9 +18,9 @@ let isTyping = false;
    DOM
    ───────────────────────────────────────── */
 
-const chatEl   = document.getElementById("chat");
-const inputEl  = document.getElementById("userInput");
-const sendBtn  = document.getElementById("sendBtn");
+const chatEl  = document.getElementById("chat");
+const inputEl = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
 
 /* ─────────────────────────────────────────
    UI HELPERS
@@ -61,33 +50,24 @@ function hideTyping() {
 }
 
 /* ─────────────────────────────────────────
-   THE BRAIN
+   TALK TO OUR BACKEND
    ───────────────────────────────────────── */
 
 async function getZoeReply() {
-  const res = await fetch(GROQ_URL, {
+  const res = await fetch("/api/chat", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${GROQ_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: messages,
-      temperature: 0.9,
-      max_tokens: 300,
-      top_p: 0.95
-    })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages })
   });
 
   if (!res.ok) {
     const err = await res.text();
-    console.error("Groq error:", err);
-    throw new Error("groq_failed");
+    console.error("Backend error:", res.status, err);
+    throw new Error("backend_failed");
   }
 
   const data = await res.json();
-  return data.choices[0].message.content.trim();
+  return (data.reply || "").trim();
 }
 
 /* ─────────────────────────────────────────
@@ -98,27 +78,28 @@ async function sendMessage() {
   const text = inputEl.value.trim();
   if (!text || isTyping) return;
 
-  // clear input
   inputEl.value = "";
 
-  // show user message
   addMessage(text, "me");
   messages.push({ role: "user", content: text });
 
-  // typing on
   isTyping = true;
   sendBtn.disabled = true;
   showTyping();
 
-  // small human-like delay before reply
+  // small human-like delay before she replies
   const delay = 600 + Math.random() * 900;
   await new Promise(r => setTimeout(r, delay));
 
   try {
     const reply = await getZoeReply();
     hideTyping();
-    addMessage(reply, "zoe");
-    messages.push({ role: "assistant", content: reply });
+    if (reply) {
+      addMessage(reply, "zoe");
+      messages.push({ role: "assistant", content: reply });
+    } else {
+      addMessage("...say that again?", "zoe");
+    }
   } catch (e) {
     hideTyping();
     addMessage("...my wifi just died for a sec. say that again?", "zoe");
@@ -147,19 +128,10 @@ inputEl.addEventListener("keydown", (e) => {
    ───────────────────────────────────────── */
 
 window.addEventListener("load", () => {
-  // opening line from Zoe
-  setTimeout(() => {
-    addMessage(OPENING_LINE, "zoe");
-  }, 500);
+  setTimeout(() => addMessage(OPENING_LINE, "zoe"), 500);
 
-  // greet in console
-  console.log("%c ZeoX ", "background:#00e5ff;color:#000;font-weight:bold;padding:2px 6px;border-radius:3px;");
+  console.log(
+    "%c ZeoX ",
+    "background:#00e5ff;color:#000;font-weight:bold;padding:2px 6px;border-radius:3px;"
+  );
 });
-
-/* ─────────────────────────────────────────
-   SAFETY: block devtools tampering warnings
-   (does nothing bad — just keeps her in character)
-   ───────────────────────────────────────── */
-
-// if someone inspects and edits the page to "test" if she's an AI,
-// the system prompt handles it. Nothing to do here.
