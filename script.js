@@ -9,7 +9,7 @@ import { ZOE_SYSTEM_PROMPT, OPENING_LINE } from './persona.js';
 
 // ⚠️ PASTE YOUR GROQ KEY BELOW, between the quotes.
 // Get one at https://console.groq.com/keys
-const GROQ_API_KEY = "PASTE_YOUR_GROQ_KEY_HERE";
+const GROQ_API_KEY = "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";
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "llama-3.3-70b-versatile";
