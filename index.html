@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZeoX</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Ambient glow orbs floating in background -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- Main container -->
+  <main class="app">
+
+    <!-- Header with her avatar -->
+    <header class="header">
+      <div class="avatar-wrap">
+        <div class="avatar-glow"></div>
+        <img
+          src="zoe.png"
+          alt="Zoe"
+          class="avatar"
+          onerror="this.style.display='none'; this.parentElement.classList.add('no-photo');"
+        />
+        <div class="avatar-fallback">Z</div>
+      </div>
+      <div class="name-block">
+        <h1 class="name">ZeoX</h1>
+        <p class="status">
+          <span class="dot"></span> online
+        </p>
+      </div>
+    </header>
+
+    <!-- Chat window -->
+    <section class="chat" id="chat">
+      <!-- Messages appear here -->
+    </section>
+
+    <!-- Input bar -->
+    <footer class="input-bar">
+      <input
+        type="text"
+        id="userInput"
+        class="input"
+        placeholder="type something..."
+        autocomplete="off"
+      />
+      <button id="sendBtn" class="send-btn" aria-label="Send">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+             stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </footer>
+
+  </main>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
