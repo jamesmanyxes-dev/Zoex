@@ -24,6 +24,7 @@ html, body {
   font-family: var(--font);
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
 }
 
 /* ─── floating background orbs ─── */
@@ -72,33 +73,36 @@ html, body {
 .app {
   position: relative;
   z-index: 1;
-  height: 100vh;
+  height: 100vh;      /* fallback for old browsers */
+  height: 100dvh;     /* real visible height on mobile */
   max-width: 480px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  padding: 20px 18px 18px;
+  padding: 14px 16px 12px;
   backdrop-filter: blur(2px);
+  overflow: hidden;
 }
 
 /* ─── header ─── */
 .header {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding-bottom: 16px;
+  gap: 12px;
+  padding-bottom: 12px;
+  flex-shrink: 0;
   animation: floatSoft 6s ease-in-out infinite;
 }
 
 @keyframes floatSoft {
   0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-4px); }
+  50%     { transform: translateY(-3px); }
 }
 
 .avatar-wrap {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
 }
 
@@ -139,7 +143,7 @@ html, body {
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 22px;
+  font-size: 20px;
   color: var(--cyan-soft);
   background: rgba(0,229,255,0.05);
 }
@@ -148,7 +152,7 @@ html, body {
 .name-block { display: flex; flex-direction: column; gap: 2px; }
 
 .name {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   letter-spacing: 0.5px;
   color: var(--text);
@@ -179,11 +183,12 @@ html, body {
 /* ─── chat window ─── */
 .chat {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 8px 4px 8px;
+  padding: 8px 2px;
   scroll-behavior: smooth;
 }
 
@@ -203,6 +208,7 @@ html, body {
   word-wrap: break-word;
   animation: bubbleIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   backdrop-filter: blur(6px);
+  -webkit-tap-highlight-color: transparent;
 }
 
 @keyframes bubbleIn {
@@ -256,13 +262,14 @@ html, body {
 .input-bar {
   display: flex;
   gap: 10px;
-  padding-top: 14px;
+  padding-top: 12px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .input {
   flex: 1;
-  padding: 13px 16px;
+  padding: 12px 16px;
   background: rgba(0,229,255,0.05);
   border: 1px solid var(--cyan-dim);
   border-radius: 24px;
@@ -280,7 +287,7 @@ html, body {
 
 /* springy send button */
 .send-btn {
-  width: 46px; height: 46px;
+  width: 44px; height: 44px;
   border-radius: 50%;
   border: 1.5px solid var(--cyan-dim);
   background: rgba(0,229,255,0.08);
@@ -293,6 +300,7 @@ html, body {
               box-shadow 0.2s, background 0.2s;
   box-shadow: 0 0 14px rgba(0,229,255,0.15);
   flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 .send-btn:hover {
   background: rgba(0,229,255,0.15);
@@ -304,12 +312,7 @@ html, body {
   box-shadow: 0 0 8px rgba(0,229,255,0.6);
 }
 
-/* gentle press-pump for all clickable things */
-button, .msg {
-  -webkit-tap-highlight-color: transparent;
-}
-
 @media (max-width: 420px) {
-  .app { padding: 14px 12px; }
+  .app { padding: 12px 12px 10px; }
   .name { font-size: 16px; }
-}
+   }
