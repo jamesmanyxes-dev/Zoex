@@ -1,7 +1,7 @@
 {
   "name": "zeox",
   "version": "1.0.0",
-  "description": "ZeoX — Zoe Xavier, a real-feeling emotional support companion.",
+  "description": "ZeoX — Zoe Xavier, a real-feeling companion with streaming replies.",
   "type": "module",
   "main": "server.js",
   "scripts": {
@@ -11,7 +11,6 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "cors": "^2.8.5"
+    "express": "^4.19.2"
   }
 }

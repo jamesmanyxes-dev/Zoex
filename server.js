@@ -1,8 +1,7 @@
 // server.js
-// Tiny backend for ZeoX. Hides the Groq key + talks to Groq for the frontend.
+// ZeoX backend — hides the Groq key, talks to Groq, streams replies live.
 
 import express from "express";
-import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -10,20 +9,22 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 
-// Middleware
-app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 
-// Serve the frontend (index.html, style.css, script.js, persona.js)
+// Static assets: /public (logo, favicon) first, then the app root
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(__dirname));
 
 // ─────────────────────────────────────────
-// The chat endpoint — frontend calls this
+// The chat endpoint — streams SSE events:
+//   data: {"t":"chunk"}   (a piece of her reply)
+//   data: [DONE]
 // ─────────────────────────────────────────
 app.post("/api/chat", async (req, res) => {
   try {
-    const { messages } = req.body;
+    const { messages, stream } = req.body;
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "no messages" });
@@ -36,11 +37,12 @@ app.post("/api/chat", async (req, res) => {
         "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: MODEL,
         messages: messages,
         temperature: 0.9,
         max_tokens: 300,
-        top_p: 0.95
+        top_p: 0.95,
+        stream: stream === true
       })
     });
 
@@ -50,6 +52,46 @@ app.post("/api/chat", async (req, res) => {
       return res.status(groqRes.status).json({ error: "groq_failed", detail: errText });
     }
 
+    // ── streaming: pipe Groq's deltas to the browser as SSE ──
+    if (stream === true) {
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        "Connection": "keep-alive"
+      });
+
+      const reader = groqRes.body.getReader();
+      const decoder = new TextDecoder();
+      let groqBuffer = "";
+
+      const push = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        groqBuffer += decoder.decode(value, { stream: true });
+        const lines = groqBuffer.split("\n");
+        groqBuffer = lines.pop();
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+          const payload = trimmed.slice(5).trim();
+          if (payload === "[DONE]") { push({ t: "" }); continue; }
+          try {
+            const evt = JSON.parse(payload);
+            const delta = evt.choices?.[0]?.delta?.content || "";
+            if (delta) push({ t: delta });
+          } catch { /* skip malformed chunk */ }
+        }
+      }
+
+      res.write("data: [DONE]\n\n");
+      return res.end();
+    }
+
+    // ── non-streaming: one full reply ──
     const data = await groqRes.json();
     const reply = data.choices?.[0]?.message?.content?.trim() || "";
     res.json({ reply });
@@ -60,9 +102,9 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-// Health check
-app.get("/health", (req, res) => res.send("ok"));
+// Health check (for Render / uptime monitors)
+app.get("/health", (req, res) => res.json({ ok: true, service: "zeox" }));
 
 app.listen(PORT, () => {
-  console.log(`ZeoX running on port ${PORT}`);
+  console.log(`ZeoX running on port ${PORT} · model: ${MODEL}`);
 });

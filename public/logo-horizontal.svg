@@ -1,0 +1,23 @@
+<svg width="360" height="96" viewBox="0 0 360 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="stroke" x1="24" y1="22" x2="66" y2="74" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7df9ff"/>
+      <stop offset="1" stop-color="#00b8d4"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="45" cy="48" r="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00e5ff" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="4" y="4" width="82" height="88" rx="20" fill="#04141a" stroke="#00e5ff" stroke-opacity="0.25"/>
+  <circle cx="45" cy="48" r="38" fill="url(#halo)"/>
+  <path d="M27 32 H63 L27 64 H63" stroke="url(#stroke)" stroke-width="8"
+        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="45" cy="13" r="3" fill="#7df9ff"/>
+
+  <text x="104" y="52" font-family="Inter, -apple-system, 'Segoe UI', system-ui, sans-serif"
+        font-size="36" font-weight="800" letter-spacing="1" fill="#eafcff">ZeoX</text>
+  <text x="105" y="74" font-family="Inter, -apple-system, 'Segoe UI', system-ui, sans-serif"
+        font-size="12" font-weight="500" letter-spacing="4.5" fill="#00e5ff">COMPANION AI</text>
+</svg>

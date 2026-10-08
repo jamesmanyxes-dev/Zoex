@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ZeoX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ZeoX — Zoe Xavier</title>
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="ZeoX — Zoe Xavier, a companion who's always there." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -13,51 +20,71 @@
   <div class="bg-orb orb-2"></div>
   <div class="bg-orb orb-3"></div>
 
-  <!-- Main container -->
   <main class="app">
 
-    <!-- Header with her avatar -->
+    <!-- Header: brand + status + actions -->
     <header class="header">
-      <div class="avatar-wrap">
-        <div class="avatar-glow"></div>
-        <img
-          src="zoe.png"
-          alt="Zoe"
-          class="avatar"
-          onerror="this.style.display='none'; this.parentElement.classList.add('no-photo');"
-        />
-        <div class="avatar-fallback">Z</div>
+      <div class="brand">
+        <div class="brand-mark-wrap">
+          <div class="avatar-glow"></div>
+          <img src="/logo.svg" alt="ZeoX" class="brand-mark" draggable="false" />
+        </div>
+        <div class="name-block">
+          <h1 class="name">ZeoX</h1>
+          <p class="status"><span class="dot"></span> online</p>
+        </div>
       </div>
-      <div class="name-block">
-        <h1 class="name">ZeoX</h1>
-        <p class="status">
-          <span class="dot"></span> online
-        </p>
-      </div>
+
+      <button id="newChatBtn" class="new-chat-btn" title="Start a fresh conversation" aria-label="New chat">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        <span>New chat</span>
+      </button>
     </header>
 
     <!-- Chat window -->
     <section class="chat" id="chat">
+      <!-- Welcome screen -->
+      <div class="welcome" id="welcome">
+        <div class="welcome-logo-wrap">
+          <div class="welcome-glow"></div>
+          <img src="/logo.svg" alt="ZeoX logo" class="welcome-logo" draggable="false" />
+        </div>
+        <h2 class="welcome-title">Hey, I'm Zoe.</h2>
+        <p class="welcome-sub">Whatever's on your mind — good day, bad day, 3am thoughts —<br />I'm here for it.</p>
+        <div class="chips" id="chips">
+          <button class="chip" data-text="rough day today ngl">rough day today ngl</button>
+          <button class="chip" data-text="i can't sleep rn">i can't sleep rn</button>
+          <button class="chip" data-text="hype me up real quick">hype me up real quick</button>
+          <button class="chip" data-text="i need advice about something">i need advice about something</button>
+        </div>
+      </div>
       <!-- Messages appear here -->
     </section>
 
-    <!-- Input bar -->
-    <footer class="input-bar">
-      <input
-        type="text"
-        id="userInput"
-        class="input"
-        placeholder="type something..."
-        autocomplete="off"
-      />
-      <button id="sendBtn" class="send-btn" aria-label="Send">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
-             stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
-      </button>
+    <!-- Composer -->
+    <footer class="composer-wrap">
+      <div class="composer glass">
+        <textarea
+          id="userInput"
+          class="input"
+          rows="1"
+          placeholder="type something..."
+          autocomplete="off"
+          maxlength="2000"
+        ></textarea>
+        <button id="sendBtn" class="send-btn" aria-label="Send" disabled>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+      <p class="composer-hint">ZeoX &middot; built with care</p>
     </footer>
 
   </main>
